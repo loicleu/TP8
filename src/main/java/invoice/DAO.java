@@ -76,10 +76,102 @@ public class DAO {
 	 * taille
 	 * @throws java.lang.Exception si la transaction a échoué
 	 */
-	public void createInvoice(CustomerEntity customer, int[] productIDs, int[] quantities)
-		throws Exception {
-		throw new UnsupportedOperationException("Pas encore implémenté");
-	}
+	public void createInvoice(CustomerEntity customer, int[] productIDs, int[] quantities) throws Exception  {
+            String sql="INSERT INTO Invoice(CustomerID,Total) VALUES (?,?)";
+            String sql2 = "INSERT INTO Item(InvoiceID,ProductID,Quantity,Cost) VALUES (?,?,?,?)";
+            String sql3="SELECT MAX(ID) AS id FROM Invoice";
+            String sql4= "SELECT Price FROM Product WHERE ID = ?";
+            String sql5 = "UPDATE Invoice SET Total=? WHERE ID=?";
+            int idcust=customer.getCustomerId();
+            int invID=0;
+            float Total=0.0f;
+           try (Connection connection = myDataSource.getConnection();){
+			PreparedStatement statement = connection.prepareStatement(sql);
+                        PreparedStatement state = connection.prepareStatement(sql2);
+                        PreparedStatement state2 = connection.prepareStatement(sql3);
+                        PreparedStatement state3 = connection.prepareStatement(sql4);
+                        try (ResultSet resultSet = state2.executeQuery()) {
+                            invID=resultSet.getInt("id");}
+			statement.setInt(1, idcust);
+                        statement.setFloat(2, Total);
+                        statement.executeQuery();
+                        if(productIDs.length==quantities.length){
+                            for(int i=0;i<productIDs.length;i++){
+                                state.setInt(1, invID);
+                                state.setInt(2, i);
+                                state.setInt(3,quantities[i]);
+                                try (ResultSet resultSet = state3.executeQuery()) {
+                                    state3.setInt(1,productIDs[i]);
+                                    state3.executeQuery();
+                                    state.setInt(4,quantities[i]*resultSet.getInt("Price"));
+                                    state.executeQuery();
+                                    Total+=quantities[i]*resultSet.getInt("Price");}}
+                            PreparedStatement state5 = connection.prepareStatement(sql5);
+                            state5.setFloat(1, Total);
+                            state5.setInt(2, invID);
+                            state5.executeUpdate();
+                            
+                        
+                        
+                        }else{
+                                throw new Exception("chaque produit n'as pas de quantitée");
+                                }
+                
+                        
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           }}
+
+	
 
 	/**
 	 *
